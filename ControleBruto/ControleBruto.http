@@ -1,0 +1,6 @@
+@ControleBruto_HostAddress = http://localhost:5231
+
+GET {{ControleBruto_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

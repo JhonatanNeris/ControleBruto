@@ -10,5 +10,7 @@ namespace ControleBruto.Data
         {
 
         }
+
+        public DbSet<Account> Accounts { get; set; }
     }
 }

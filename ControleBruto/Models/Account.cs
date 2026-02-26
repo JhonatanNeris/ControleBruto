@@ -4,12 +4,18 @@ namespace ControleBruto.Models
 {
     public class Account
     {
-        [Required]
         [Key]
+        [Required]
         public int Id { get; set; }
+        [Required]
         public string UserId { get; set; }
+        [Required(ErrorMessage = "O nome da conta é obrigatório.")]
+        [MaxLength(100)]
         public string Name { get; set; }
+        [Required]
+        [MaxLength(100)]
         public string Type { get; set; }
-        public double? InitialBalance { get; set; }
+        public long InitialBalanceCents { get; set; } = 0;
+        public User? User { get; set; }
     }
-}
+} 

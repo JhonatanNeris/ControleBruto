@@ -5,6 +5,11 @@ namespace ControleBruto.Models
     public class User : IdentityUser
     {
         public string Name { get; set; }
-        public User() : base() { }
+        public virtual ICollection<Account> Accounts { get; set; }
+
+        public User() : base()
+        {
+
+        }
     }
 }

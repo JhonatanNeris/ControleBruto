@@ -12,5 +12,6 @@ namespace ControleBruto.Data
         }
 
         public DbSet<Account> Accounts { get; set; }
+        public DbSet<Category> Categories { get; set; }
     }
 }

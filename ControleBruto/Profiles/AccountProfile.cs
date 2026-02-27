@@ -9,10 +9,8 @@ namespace ControleBruto.Profiles
         public AccountProfile()
         {
             CreateMap<CreateAccountDto, Account>();
-            CreateMap<Account, ReadAccountDto>();
             CreateMap<UpdateAccountDto, Account>();
-
+            CreateMap<Account, ReadAccountDto>();
         }
-
     }
 }

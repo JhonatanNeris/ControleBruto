@@ -35,6 +35,11 @@ public class AccountsController : ControllerBase
             .Where(conta => conta.UserId == userId)
             .ToListAsync();
 
+        foreach (Account account in accounts)
+        {
+            Console.WriteLine(account);
+        }
+
         return _mapper.Map<List<ReadAccountDto>>(accounts);
 
     }
@@ -71,7 +76,8 @@ public class AccountsController : ControllerBase
 
         await _context.SaveChangesAsync();
 
-        return CreatedAtAction(nameof(GetById),account);
+        return CreatedAtAction(nameof(GetById), new { id = account.Id }, account);
+
     }
     [HttpPut]
     [Route("{id}")]

@@ -17,5 +17,11 @@ namespace ControleBruto.Models
         public string Type { get; set; }
         public long InitialBalanceCents { get; set; } = 0;
         public User? User { get; set; }
+        public ICollection<Transaction>? Transactions { get; set; }
+
+        public override string ToString()
+        {
+            return $"Id: {Id}, UserId: {UserId}";
+        }
     }
 } 

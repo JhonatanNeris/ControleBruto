@@ -49,6 +49,18 @@ builder.Services.AddAuthorization();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<TokenService>();
 
+// Configuração do CORS para permitir requisições do frontend
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy.WithOrigins("http://localhost:3000")
+              .AllowCredentials()
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -84,6 +96,7 @@ builder.Services.AddSwaggerGen(options =>
             new string[] {}
         }
     });
+
 });
 var app = builder.Build();
 
@@ -93,6 +106,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+// Habilitar CORS
+app.UseCors("AllowFrontend");
 
 app.UseHttpsRedirection();
 

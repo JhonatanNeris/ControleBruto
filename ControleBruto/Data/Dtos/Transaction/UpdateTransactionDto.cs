@@ -17,6 +17,6 @@ namespace ControleBruto.Data.Dtos.Transaction
         public long AmountCents { get; set; }
 
         [Required]
-        public DateTime Date { get; set; }
+        public DateTime Date { get; set; } = DateTime.UtcNow;
     }
 }

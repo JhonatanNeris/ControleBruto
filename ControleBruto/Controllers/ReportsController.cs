@@ -56,6 +56,7 @@ public class ReportsController : ControllerBase
         return Ok(new
         {
             Period = new { month, year },
+            TransactionsCount = transactions.Count,
             MonthlyIncome = totalIncome,
             MonthlyExpense = totalExpense,
             MonthlyBalance = totalIncome - totalExpense,

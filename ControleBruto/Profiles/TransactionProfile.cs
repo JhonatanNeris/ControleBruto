@@ -11,7 +11,6 @@ namespace ControleBruto.Profiles
             CreateMap<CreateTransactionDto, Transaction>();
             CreateMap<UpdateTransactionDto, Transaction>();
             CreateMap<Transaction, ReadTransactionDto>();
-
         }
     }
 }

@@ -184,7 +184,8 @@ public class TransactionController : ControllerBase
             .OrderByDescending(t => t.Date)
             .ThenByDescending(t => t.Id)
             .Skip(skip)
-            .Take(take)
+            .Take(take)                        
+            .Include(t => t.Category)
             .ToListAsync();
 
         return Ok(new
@@ -192,7 +193,7 @@ public class TransactionController : ControllerBase
             total,
             skip,
             take,
-            items = _mapper.Map<List<ReadTransactionDto>>(items)
+            items = _mapper.Map<List<ReadTransactionDto>>(items),
         });
     }
 

@@ -4,7 +4,9 @@ using ControleBruto.Data.Dtos;
 using ControleBruto.Data.Dtos.Category;
 using ControleBruto.Extensions;
 using ControleBruto.Models;
+using ControleBruto.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,13 +18,11 @@ namespace ControleBruto.Controllers;
 
 public class CategoryController : ControllerBase
 {
-    private ControleBrutoContext _context;
-    private IMapper _mapper;
+    private CategoryService _categoryService;
 
-    public CategoryController(ControleBrutoContext context, IMapper mapper)
+    public CategoryController(CategoryService categoryService)
     {
-        _context = context;
-        _mapper = mapper;
+        _categoryService = categoryService;
     }
 
     [HttpGet]
@@ -30,13 +30,9 @@ public class CategoryController : ControllerBase
     {
         var userId = User.GetUserId();
 
-        var categories = await _context.Categories
-            .AsNoTracking()
-            .Where(conta => conta.UserId == userId)
-            .ToListAsync();
+        var result = await _categoryService.GetAllAsync(userId);
 
-        return _mapper.Map<List<ReadCategoryDto>>(categories);
-
+        return Ok(result);
     }
 
     [HttpGet]
@@ -45,51 +41,28 @@ public class CategoryController : ControllerBase
     {
         var userId = User.GetUserId();
 
-        var category = await _context.Categories
-            .AsNoTracking()
-            .Where(a => a.UserId == userId && a.Id == id)
-            .FirstOrDefaultAsync();
+        var result = await _categoryService.GetByIdAsync(userId, id);
 
-        if (category != null)
-        {
-            ReadCategoryDto categoryDto = _mapper.Map<ReadCategoryDto>(category);
-            return Ok(categoryDto);
-        }
-
-        return NotFound();
+        return result is null ? NotFound() : Ok(result);
     }
+
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateCategoryDto dto)
     {
         var userId = User.GetUserId();
 
-        Category category = _mapper.Map<Category>(dto);
+        var result = await _categoryService.CreateAsync(userId, dto);
 
-        category.UserId = userId;
-
-        _context.Categories.Add(category);
-
-        await _context.SaveChangesAsync();
-
-        var readDto = _mapper.Map<ReadCategoryDto>(category);
-
-        return CreatedAtAction(nameof(GetById), new { id = category.Id }, readDto);
+        return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
     }
+
     [HttpPut]
     [Route("{id}")]
     public async Task<IActionResult> Update(int id, [FromBody] UpdateCategoryDto dto)
     {
         var userId = User.GetUserId();
 
-        var category = await _context.Categories
-            .Where(c => c.Id == id && c.UserId == userId)
-            .FirstOrDefaultAsync();
-
-        if (category == null) return NotFound(new { message = "Categoria não encontrada." });
-
-        _mapper.Map(dto, category);
-
-        await _context.SaveChangesAsync();
+        await _categoryService.UpdateAsync(userId, id, dto);
 
         return NoContent();
 
@@ -101,20 +74,10 @@ public class CategoryController : ControllerBase
     {
         var userId = User.GetUserId();
 
-        var category = await _context.Categories
-            .Where(c => c.Id == id && c.UserId == userId)
-            .FirstOrDefaultAsync();
-
-        if (category == null) return NotFound(new { message = "Categoria não encontrada." });
-
-        _context.Categories.Remove(category);
-
-        await _context.SaveChangesAsync();
+        await _categoryService.DeleteAsync(userId, id);
 
         return NoContent();
     }
 
-
-
-
 }
+

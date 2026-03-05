@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using ControleBruto.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -43,11 +44,15 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+//Adicionar o middleware de tratamento de exceções
+builder.Services.AddTransient<ExceptionHandlingMiddleware>();
+
 builder.Services.AddAuthorization();
 
-//Precisamos adicionar o TokenService e UserService para que possam ser injetados no UserController
+//Precisamos adicionar os serviços para que possam ser injetados no UserController
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<TokenService>();
+builder.Services.AddScoped<CategoryService>();
 
 // Configuração do CORS para permitir requisições do frontend
 builder.Services.AddCors(options =>
@@ -115,6 +120,8 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 
 app.UseAuthorization();
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.MapControllers();
 

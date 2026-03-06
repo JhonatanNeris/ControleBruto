@@ -22,15 +22,8 @@ public class UserController : ControllerBase
     [HttpPost("register")]
     public async Task<IActionResult> CreateUser(CreateUserDto dto)
     {
-        try
-        {
-            await _userService.Register(dto);
-            return Ok("Usuário cadastrado");
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(new { message = ex.Message });
-        }
+        await _userService.Register(dto);
+        return Ok("Usuário cadastrado");
     }
 
     [HttpPost("login")]
@@ -38,6 +31,5 @@ public class UserController : ControllerBase
     {
         var token = await _userService.Login(dto);
         return Ok(token);
-
     }
 }

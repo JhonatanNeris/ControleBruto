@@ -3,7 +3,6 @@ using ControleBruto.Data;
 using ControleBruto.Data.Dtos.Category;
 using ControleBruto.Exceptions;
 using ControleBruto.Models;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace ControleBruto.Services;
@@ -85,7 +84,5 @@ public class CategoryService
 
         await _context.SaveChangesAsync();
     }
-
-
 
 }

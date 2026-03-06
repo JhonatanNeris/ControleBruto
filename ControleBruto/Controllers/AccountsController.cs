@@ -3,6 +3,7 @@ using ControleBruto.Data;
 using ControleBruto.Data.Dtos;
 using ControleBruto.Extensions;
 using ControleBruto.Models;
+using ControleBruto.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -18,11 +19,13 @@ public class AccountsController : ControllerBase
 
     private ControleBrutoContext _context;
     private IMapper _mapper;
+    private AccountService _accountService;
 
-    public AccountsController(ControleBrutoContext context, IMapper mapper)
+    public AccountsController(ControleBrutoContext context, IMapper mapper, AccountService accountService)
     {
         _context = context;
         _mapper = mapper;
+        _accountService = accountService;
     }
 
     [HttpGet]
@@ -30,18 +33,9 @@ public class AccountsController : ControllerBase
     {
         var userId = User.GetUserId();
 
-        var accounts = await _context.Accounts
-            .AsNoTracking()
-            .Where(conta => conta.UserId == userId)
-            .ToListAsync();
+        var result = await _accountService.GetAllAsync(userId);
 
-        foreach (Account account in accounts)
-        {
-            Console.WriteLine(account);
-        }
-
-        return _mapper.Map<List<ReadAccountDto>>(accounts);
-
+        return Ok(result);
     }
 
     [HttpGet]
@@ -50,33 +44,19 @@ public class AccountsController : ControllerBase
     {
         var userId = User.GetUserId();
 
-        var account = await _context.Accounts
-            .AsNoTracking()
-            .Where(a => a.UserId == userId && a.Id == id)
-            .FirstOrDefaultAsync();
+        var result = await _accountService.GetByIdAsync(userId, id);
 
-        if (account != null)
-        {
-            ReadAccountDto accountDto = _mapper.Map<ReadAccountDto>(account);
-            return Ok(accountDto);
-        }
+        return result is null ? NotFound() : Ok(result);
 
-        return NotFound();
     }
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateAccountDto dto)
     {
         var userId = User.GetUserId();
 
-        Account account = _mapper.Map<Account>(dto);
+        var result = await _accountService.CreateAsync(userId, dto);
 
-        account.UserId = userId;
-
-        _context.Accounts.Add(account);
-
-        await _context.SaveChangesAsync();
-
-        return CreatedAtAction(nameof(GetById), new { id = account.Id }, account);
+        return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
 
     }
     [HttpPut]
@@ -85,15 +65,7 @@ public class AccountsController : ControllerBase
     {
         var userId = User.GetUserId();
 
-        var account = await _context.Accounts
-            .Where(conta => conta.Id == id && conta.UserId == userId)
-            .FirstOrDefaultAsync();
-
-        if (account == null) return NotFound(new { message = "Conta não encontrada." });
-
-        _mapper.Map(dto, account);
-
-        await _context.SaveChangesAsync();
+        await _accountService.UpdateAsync(userId, id, dto);
 
         return NoContent();
 
@@ -105,15 +77,7 @@ public class AccountsController : ControllerBase
     {
         var userId = User.GetUserId();
 
-        var account = await _context.Accounts
-            .Where(conta => conta.Id == id && conta.UserId == userId)
-            .FirstOrDefaultAsync();
-
-        if (account == null) return NotFound(new { message = "Conta não encontrada." });
-
-        _context.Accounts.Remove(account);
-
-        await _context.SaveChangesAsync();
+        await _accountService.DeleteAsync(userId, id);
 
         return NoContent();
     }

@@ -55,6 +55,7 @@ builder.Services.AddScoped<TokenService>();
 builder.Services.AddScoped<CategoryService>();
 builder.Services.AddScoped<AccountService>();
 builder.Services.AddScoped<ReportsService>();
+builder.Services.AddScoped<TransactionService>();
 
 // Configuração do CORS para permitir requisições do frontend
 builder.Services.AddCors(options =>

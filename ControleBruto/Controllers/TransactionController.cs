@@ -49,7 +49,7 @@ public class TransactionController : ControllerBase
 
 
     [HttpGet]
-    public async Task<ActionResult<PagedResultDto<ReadTransactionDto>>> Get(TransactionQueryDto queryDto)
+    public async Task<ActionResult<PagedResultDto<ReadTransactionDto>>> Get([FromQuery]TransactionQueryDto queryDto)
     {
         var userId = User.GetUserId();
 
